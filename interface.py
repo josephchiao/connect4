@@ -54,12 +54,11 @@ def player_vs_player():
         if Game.game_draw():
             print("Game drawed")
             end = True
-
-        if Game.game_won():
+        elif Game.red_wins:
+            print("Red wins")
             end = True
-            if Game.red_wins:
-                print("Red wins")
-            elif Game.yellow_wins:
-                print("Yellow wins")
+        elif Game.yellow_wins:
+            print("Yellow wins")
+            end = True
 
-# player_vs_player()
+player_vs_player()
