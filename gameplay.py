@@ -11,7 +11,7 @@ class Game:
 
     def square(self, placement):
         if (
-            0 <= placement[0] <= 6 
+            0 <= placement[0] <= 5 
             and 0 <= placement[1] <= 6
         ):
             return self.board[placement[0]][placement[1]]
