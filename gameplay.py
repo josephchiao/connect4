@@ -21,7 +21,7 @@ class Game:
             if hight == 6:
                 return False
         
-        return (placement, hight)
+        return (hight, placement)
 
     
     def connect_4(self, placement, direction):
