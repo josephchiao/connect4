@@ -33,7 +33,7 @@ def branch_playable(game):
     legal_moves = branch_avalibilities(game.board)
     for possible_position in legal_moves:
         branch = copy.deepcopy(game)
-        branch.player_movement(possible_position)
+        branch.player_movement(possible_position[0])
         playable_branch.append(branch)
     
     return playable_branch
