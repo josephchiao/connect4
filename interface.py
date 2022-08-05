@@ -47,13 +47,9 @@ def player_vs_player():
     end = False
     display(Game.board)
     while not end:
-
         Play.player_input()
-        
-        Play.side = 1 - Play.side
 
         display(Game.board)
-
 
         if Game.game_draw():
             print("Game drawed")
