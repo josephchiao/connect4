@@ -32,6 +32,16 @@ class branches:
             possible_boards.append(new_board)
 
         return possible_boards
+    
+    def branch_playable(self):
+        
+        playable_branch = []
 
-for i in range(len(branches(setup.board_generation(), 1).branch())):
-    ui.display(branches(setup.board_generation(), 1).branch()[i])
+        legal_moves = self.branch_avalibilities()
+
+        for move in legal_moves:
+            new_board = copy.deepcopy(self.board)
+            new_board[move[0]][move[1]] = self.side
+            playable_branch.append(gp.Play(new_board))
+        
+        return playable_branch
