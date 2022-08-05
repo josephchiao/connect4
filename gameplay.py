@@ -21,12 +21,15 @@ class Game:
             if hight == 6:
                 return False
         
-        return (hight, placement)
+        return [hight, placement]
 
     
     def connect_4(self, placement, direction):
+        placement_copy = list(placement)
         for x in range(3):
-            if self.board[placement[0] + direction[0]][placement[1] + direction[1]] != self.side:
+            placement_copy[0] += direction[0]
+            placement_copy[1] += direction[1]
+            if self.board[placement_copy[0]][placement_copy[1]] != self.side:
                 return False
 
         return True
@@ -52,7 +55,11 @@ class Game:
             (1, -1)
         ]:
             if self.connect_4(placement, direction):
-                [self.red_wins, self.yellow_wins][self.side] = True
+                if self.side == 1:
+                    self.yellow_wins = True
+
+                elif self.side == 0:
+                    self.red_wins = True
 
         if self.game_draw():
             self.draw = True

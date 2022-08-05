@@ -1,21 +1,7 @@
 import gameplay as gp
 import setup
 
-Game = gp.Game(setup.board_generation())
-# Game = gp.Game([[None, None, None, None, None, None, None], 
-#                 [None, None, None, None, None, None, None], 
-#                 [None, None, None, None, None, None, None], 
-#                 [None, None, None, None, None, None, None], 
-#                 [None, None, None, None, None, None, None], 
-#                 [None, None, None, None, None, None, None]])
-# Game = gp.Game([[None, None, None, None, None, None, None], 
-#                 [None, None, None, None, None, None, None], 
-#                 [0, None, None, None, None, None, None], 
-#                 [0, None, None, None, None, None, None], 
-#                 [0, None, None, None, None, None, None], 
-#                 [0, None, None, None, None, None, None]])
-
-Play = gp.Play(Game.board)
+Play = gp.Play(setup.board_generation())
 
 def display(board):
 
@@ -45,19 +31,18 @@ def display(board):
 def player_vs_player():
 
     end = False
-    display(Game.board)
+    display(Play.board)
     while not end:
         Play.player_input()
 
-        display(Game.board)
-
-        if Game.game_draw():
+        display(Play.board)
+        if Play.draw:
             print("Game drawed")
             end = True
-        elif Game.red_wins:
+        elif Play.red_wins:
             print("Red wins")
             end = True
-        elif Game.yellow_wins:
+        elif Play.yellow_wins:
             print("Yellow wins")
             end = True
 
