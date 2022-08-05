@@ -1,4 +1,3 @@
-import interface as ui
 import gameplay as gp
 import setup
 from dataclasses import dataclass
@@ -28,14 +27,13 @@ def board_branch(board, side):
 
     return possible_boards
 
-def branch_playable(board, side):
+def branch_playable(game):
     
     playable_branch = []
-    legal_moves = branch_avalibilities(board)
+    legal_moves = branch_avalibilities(game.board)
     for possible_position in legal_moves:
-        branch = gp.Game(board, side)
+        branch = copy.deepcopy(game)
         branch.player_movement(possible_position)
-        playable_branch.append(copy.deepcopy(branch))
-
+        playable_branch.append(branch)
     
     return playable_branch

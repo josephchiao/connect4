@@ -1,5 +1,7 @@
 import gameplay as gp
 import setup
+import tree_search as ts
+
 
 Game = gp.Game(setup.board_generation())
 
@@ -46,4 +48,5 @@ def player_vs_player():
             print("Yellow wins")
             end = True
 
-player_vs_player()
+# player_vs_player()
+print(ts.tree_search(Game, 2))
