@@ -2,6 +2,7 @@ import interface as ui
 import gameplay as gp
 import setup
 from dataclasses import dataclass
+import copy
 
 @dataclass
 class branches:
@@ -17,16 +18,20 @@ class branches:
                 placement = gp.Game(self.board).player_placement(move)
                 legal_moves.append(placement)
 
-            
-        return legal_moves        
+        return legal_moves
 
+    def branch(self):
 
-possible_positions = []
-board = setup.board_generation()
-test = branches(board, 0)
-legal_moves = test.branch_avalibilities()
-for move in legal_moves:
-    print(move)
-    print(test.branch_possibilities(move))
-    possible_positions.append(test.branch_possibilities(move))
-print(possible_positions)
+        possible_boards = []
+
+        legal_moves = self.branch_avalibilities()
+
+        for move in legal_moves:
+            new_board = copy.deepcopy(self.board)
+            new_board[move[0]][move[1]] = self.side
+            possible_boards.append(new_board)
+
+        return possible_boards
+
+for i in range(len(branches(setup.board_generation(), 1).branch())):
+    ui.display(branches(setup.board_generation(), 1).branch()[i])
