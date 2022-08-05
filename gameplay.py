@@ -9,6 +9,15 @@ class Game:
     yellow_wins : bool = False
     draw: bool = False
 
+    def square(self, placement):
+        if (
+            0 <= placement[0] <= 6 
+            and 0 <= placement[1] <= 6
+        ):
+            return self.board[placement[0]][placement[1]]
+
+        else:
+            return None
 
     def player_placement(self, placement):
 
@@ -29,7 +38,7 @@ class Game:
         for x in range(3):
             placement_copy[0] += direction[0]
             placement_copy[1] += direction[1]
-            if self.board[placement_copy[0]][placement_copy[1]] != self.side:
+            if self.square(placement_copy) != self.side:
                 return False
 
         return True
