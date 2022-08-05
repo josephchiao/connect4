@@ -1,12 +1,12 @@
 import gameplay as gp
 import setup
 
-Play = gp.Play(setup.board_generation())
+Game = gp.Game(setup.board_generation())
 
 def display(board):
 
     board.reverse()
-    if Play.side:
+    if Game.side:
         print("\nYellow")
     else:
         print("\nRed")
@@ -31,18 +31,18 @@ def display(board):
 def player_vs_player():
 
     end = False
-    display(Play.board)
+    display(Game.board)
     while not end:
-        Play.player_input()
+        Game.player_input()
 
-        display(Play.board)
-        if Play.draw:
+        display(Game.board)
+        if Game.draw:
             print("Game drawed")
             end = True
-        elif Play.red_wins:
+        elif Game.red_wins:
             print("Red wins")
             end = True
-        elif Play.yellow_wins:
+        elif Game.yellow_wins:
             print("Yellow wins")
             end = True
 

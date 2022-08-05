@@ -5,6 +5,7 @@ import setup
 class Game:
 
     board : list 
+    side : int = 0
     red_wins : bool = False
     yellow_wins : bool = False
     draw: bool = False
@@ -72,12 +73,6 @@ class Game:
 
         if self.game_draw():
             self.draw = True
-
-
-@dataclass
-class Play(Game):
-
-    side : int = 0
     
     def player_movement(self, player_input):
             

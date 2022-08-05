@@ -4,44 +4,38 @@ import setup
 from dataclasses import dataclass
 import copy
 
-@dataclass
-class branches:
 
-    board : list
-    side : int
-
-    def branch_avalibilities(self):
-        
-        legal_moves = []
-        for move in range(7):
-            if gp.Game(self.board).player_placement(move):
-                placement = gp.Game(self.board).player_placement(move)
-                legal_moves.append(placement)
-
-        return legal_moves
-
-    def branch(self):
-
-        possible_boards = []
-
-        legal_moves = self.branch_avalibilities()
-
-        for move in legal_moves:
-            new_board = copy.deepcopy(self.board)
-            new_board[move[0]][move[1]] = self.side
-            possible_boards.append(new_board)
-
-        return possible_boards
+def branch_avalibilities(board):
     
-    def branch_playable(self):
-        
-        playable_branch = []
+    legal_moves = []
+    for move in range(7):
+        if gp.Game(board).player_placement(move):
+            placement = gp.Game(board).player_placement(move)
+            legal_moves.append(placement)
 
-        legal_moves = self.branch_avalibilities()
+    return legal_moves
 
-        for move in legal_moves:
-            new_board = copy.deepcopy(self.board)
-            new_board[move[0]][move[1]] = self.side
-            playable_branch.append(gp.Play(new_board))
-        
-        return playable_branch
+def board_branch(board, side):
+
+    possible_boards = []
+
+    legal_moves = branch_avalibilities(board)
+
+    for move in legal_moves:
+        new_board = copy.deepcopy(board)
+        new_board[move[0]][move[1]] = side
+        possible_boards.append(new_board)
+
+    return possible_boards
+
+def branch_playable(board, side):
+    
+    playable_branch = []
+    legal_moves = branch_avalibilities(board)
+    for possible_position in legal_moves:
+        branch = gp.Game(board, side)
+        branch.player_movement(possible_position)
+        playable_branch.append(copy.deepcopy(branch))
+
+    
+    return playable_branch
