@@ -49,4 +49,7 @@ def player_vs_player():
             end = True
 
 # player_vs_player()
-print(ts.tree_search(Game, 2))
+best_line = ts.tree_search(Game, 4)
+print(f"eval: {best_line[0]}")
+for game in best_line[1]:
+    display(game.board)

@@ -3,7 +3,14 @@ import gameplay
 import random
 
 def eval(game):
-    return random.random()
+    eval = 0
+    for x in range(5):
+        for y in range(5):
+            if game.square([x, y]) is not None:
+                eval += x
+
+    return eval
+
 
 
 def tree_search(game, depth, level = 0):
@@ -19,7 +26,7 @@ def tree_search(game, depth, level = 0):
         lines, 
         key=lambda line: line[0]
     )
-    best_line[1].insert(0, future_game)
+    best_line[1].insert(0, game)
     return best_line
 
 
