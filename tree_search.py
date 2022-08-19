@@ -4,8 +4,8 @@ import random
 
 def eval(game):
     eval = 0
-    for x in range(5):
-        for y in range(5):
+    for x in range(6):
+        for y in range(7):
             if game.square([x, y]) is not None:
                 eval += x
 
