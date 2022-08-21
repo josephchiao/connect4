@@ -1,6 +1,7 @@
 import gameplay as gp
 import setup
 import tree_search as ts
+import branch
 
 
 Game = gp.Game(setup.board_generation())
@@ -35,6 +36,7 @@ def player_vs_player():
     end = False
     display(Game.board)
     while not end:
+
         Game.player_input()
 
         display(Game.board)
@@ -70,23 +72,33 @@ def player_vs_computer():
 
         if Game.side == player_side:
             Game.player_input()
-            
+
+            end = game_interval()
+
         elif Game.side == computer_side:
-            best_line = ts.tree_search(Game, 4)
+            best_line = ts.tree_search(Game, 5)
+            print(best_line)
             new_game_state = best_line[1][1]
             Game.board = new_game_state.board
             Game.side = 1 - Game.side 
 
-        display(Game.board)
-        if Game.draw:
-            print("Game drawed")
-            end = True
-        elif Game.red_wins:
-            print("Red wins")
-            end = True
-        elif Game.yellow_wins:
-            print("Yellow wins")
-            end = True
+            end = game_interval()
+
+def game_interval():
+    
+    display(Game.board)
+    Game.win_con_general_eval()
+    if Game.draw:
+        print("Game drawed")
+        return True
+    elif Game.red_wins:
+        print("Red wins")
+        return True
+    elif Game.yellow_wins:
+        print("Yellow wins")
+        return True
+    
+    return False
     
 
 player_vs_computer()

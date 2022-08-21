@@ -73,7 +73,20 @@ class Game:
 
         if self.game_draw():
             self.draw = True
-    
+
+    def win_con_general_eval(self):
+        for rows in range(6):
+            for position in range(7):
+                if self.board[rows][position] == self.side:
+                    self.update_win_con([rows, position])
+                elif self.board[rows][position] is not None:
+                    self.side = 1 - self.side
+                    self.update_win_con([rows, position])
+                    self.side = 1 - self.side
+
+                if self.yellow_wins or self.red_wins:
+                    return True
+
     def player_movement(self, player_input):
             
         placement = self.player_placement(player_input)
