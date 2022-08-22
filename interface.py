@@ -2,9 +2,9 @@ import gameplay as gp
 import setup
 import tree_search as ts
 import branch
+import numpy as np
 
 
-Game = gp.Game(setup.board_generation())
 
 def display(board):
 
@@ -84,6 +84,28 @@ def player_vs_computer():
 
             end = game_interval()
 
+def computer_vs_computer():
+
+    thetas = np.load('nn_theta_set.npz')
+    theta_1 = thetas['Theta1']
+    theta_2 = thetas['Theta2']
+    theta_3 = thetas['Theta3']
+
+    end = False
+    
+    while not end:
+
+        if Game.side == 0:
+            best_line = ts.tree_search(Game, 4, theta_1 = theta_1, theta_2 = theta_2, theta_3 = theta_3)
+        elif Game.side == 1:
+            best_line = ts.tree_search(Game, 4, theta_1 = theta_1, theta_2 = theta_2, theta_3 = theta_3)
+        print(best_line)
+        new_game_state = best_line[1][1]
+        Game.board = new_game_state.board
+        Game.side = 1 - Game.side 
+
+        end = game_interval()
+
 def game_interval():
     
     display(Game.board)
@@ -99,9 +121,12 @@ def game_interval():
         return True
     
     return False
-    
 
-player_vs_computer()
+Game = gp.Game(setup.board_generation())
+
+  
+computer_vs_computer()
+# player_vs_computer()
 # player_vs_player()
 # best_line = ts.tree_search(Game, 4)
 # print(f"eval: {best_line[0]}")
