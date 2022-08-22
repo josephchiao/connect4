@@ -74,14 +74,32 @@ class Game:
         if self.game_draw():
             self.draw = True
 
+    def update_win_con_limited(self, placement):
+        for direction in [
+            (1, 0), 
+            (0, 1), 
+            (1, 1), 
+            (1, -1)
+        ]:
+            if self.connect_4(placement, direction):
+                if self.side == 1:
+                    self.yellow_wins = True
+
+                elif self.side == 0:
+                    self.red_wins = True
+
+        if self.game_draw():
+            self.draw = True
+
+
     def win_con_general_eval(self):
         for rows in range(6):
             for position in range(7):
                 if self.board[rows][position] == self.side:
-                    self.update_win_con([rows, position])
+                    self.update_win_con_limited([rows, position])
                 elif self.board[rows][position] is not None:
                     self.side = 1 - self.side
-                    self.update_win_con([rows, position])
+                    self.update_win_con_limited([rows, position])
                     self.side = 1 - self.side
 
                 if self.yellow_wins or self.red_wins:
@@ -97,7 +115,14 @@ class Game:
         self.board[placement[0]][placement[1]] = self.side
         self.update_win_con(placement)
         self.side = 1 - self.side
-        return True
+        return True        
+
+    def computer_movement(self, placement):
+        
+        self.board[placement[0]][placement[1]] = self.side
+        self.update_win_con(placement)
+        self.side = 1 - self.side
+        return True        
 
     def player_input(self):
 
