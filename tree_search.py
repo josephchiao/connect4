@@ -48,8 +48,8 @@ def tree_search(game, depth, theta_1 = None, theta_2 = None, theta_3 = None, lev
     '''Searches through all possible game states, and output the best one as a list of game states'''
     
     #If branch result in game conclusion, return as the end of branch
-    if game.win_con_general_eval() or game.game_draw():
-        return [nn_eval(game, theta_1, theta_2, theta_3), [game]]
+    if game.win_con_eval():
+        return [game.win_con_eval(), [game]]
 
     #If branch reached deapth, return as the end of branch
     elif level == depth:

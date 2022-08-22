@@ -34,15 +34,26 @@ class Game:
         return [hight, placement]
 
     
-    def connect_4(self, placement, direction):
+    def connect_n(self, placement, direction):
         placement_copy = list(placement)
         for x in range(3):
             placement_copy[0] += direction[0]
             placement_copy[1] += direction[1]
             if self.square(placement_copy) != self.side:
-                return False
+                return x
 
-        return True
+        return 3
+
+
+    def win_con(self, placement):
+        for direction in [(0, 1), (1, 1), (1, 0), (1, -1)]:
+            if (
+                self.connect_n(self, direction, placement)
+                + self.connect_n(self, (-direction[0], -direction[1]), placement)
+            ) >= 3:
+                return True
+
+        return False
 
 
     def game_draw(self):
@@ -53,26 +64,26 @@ class Game:
         return True
 
 
-    def update_win_con(self, placement):
-        for direction in [
-            (1, 0), 
-            (-1, 0), 
-            (0, 1), 
-            (0, -1),
-            (1, 1), 
-            (-1, 1),
-            (-1, -1),
-            (1, -1)
-        ]:
-            if self.connect_4(placement, direction):
-                if self.side == 1:
-                    self.yellow_wins = True
+    def update_win_con(self, placement):     
+        if self.win_con(placement):
+            if self.side == 1:
+                self.yellow_wins = True
 
-                elif self.side == 0:
-                    self.red_wins = True
+            elif self.side == 0:
+                self.red_wins = True
 
         if self.game_draw():
             self.draw = True
+
+    def win_con_eval(self):
+        if self.draw:
+            return 0.5
+            
+        elif self.yellow_wins:
+            return 1
+
+        elif self.red_wins:
+            return 0
 
     def update_win_con_limited(self, placement):
         for direction in [
