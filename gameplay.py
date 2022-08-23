@@ -20,19 +20,12 @@ class Game:
         else:
             return None
 
-    def player_placement(self, placement):
-
-        if placement not in [i for i in range(7)]:
-            return False
-
-        hight = 0
-        while self.board[hight][placement] is not None:
-            hight += 1
-            if hight == 6:
+    def game_draw(self):
+        for rows in self.board:
+            if None in rows:
                 return False
-        
-        return [hight, placement]
 
+        return True
     
     def connect_n(self, placement, direction):
         placement_copy = list(placement)
@@ -44,28 +37,29 @@ class Game:
 
         return 3
 
+    #Archived
+    def connect_4(self, placement, direction):
+        placement_copy = list(placement)
+        for x in range(3):
+            placement_copy[0] += direction[0]
+            placement_copy[1] += direction[1]
+            if self.square(placement_copy) != self.side:
+                return False
+        return True
 
     def win_con(self, placement):
         for direction in [(0, 1), (1, 1), (1, 0), (1, -1)]:
             if (
-                self.connect_n(self, direction, placement)
-                + self.connect_n(self, (-direction[0], -direction[1]), placement)
+                self.connect_n(placement, direction)
+                + self.connect_n(placement, (-direction[0], -direction[1]))
             ) >= 3:
                 return True
 
         return False
 
-
-    def game_draw(self):
-        for rows in self.board:
-            if None in rows:
-                return False
-
-        return True
-
-
     def update_win_con(self, placement):     
         if self.win_con(placement):
+
             if self.side == 1:
                 self.yellow_wins = True
 
@@ -115,6 +109,20 @@ class Game:
 
                 if self.yellow_wins or self.red_wins:
                     return True
+
+    def player_placement(self, placement):
+
+        if placement not in [i for i in range(7)]:
+            return False
+
+        hight = 0
+        while self.board[hight][placement] is not None:
+            hight += 1
+            if hight == 6:
+                return False
+        
+        return [hight, placement]
+
 
     def player_movement(self, player_input):
             

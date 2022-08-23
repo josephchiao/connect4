@@ -6,10 +6,10 @@ import numpy as np
 
 
 
-def display(board):
+def display(board, side):
 
     board.reverse()
-    if Game.side:
+    if side:
         print("\nYellow")
     else:
         print("\nRed")
@@ -31,7 +31,7 @@ def display(board):
         print(row)
     board.reverse()
 
-def player_vs_player():
+def player_vs_player(Game):
 
     end = False
     display(Game.board)
@@ -50,7 +50,7 @@ def player_vs_player():
             print("Yellow wins")
             end = True
 
-def player_vs_computer():
+def player_vs_computer(Game):
 
     player_side = None
 
@@ -86,6 +86,8 @@ def player_vs_computer():
 
 def computer_vs_computer():
 
+    Game = gp.Game(setup.board_generation())
+
     thetas = np.load('nn_theta_set.npz')
     theta_1 = thetas['Theta1']
     theta_2 = thetas['Theta2']
@@ -100,16 +102,16 @@ def computer_vs_computer():
         elif Game.side == 1:
             best_line = ts.tree_search(Game, 4, theta_1 = theta_1, theta_2 = theta_2, theta_3 = theta_3)
         print(best_line)
-        new_game_state = best_line[1][1]
-        Game.board = new_game_state.board
-        Game.side = 1 - Game.side 
-
-        end = game_interval()
-
-def game_interval():
+        Game = best_line[1][1]
+        
+        end = game_interval(Game)
     
-    display(Game.board)
-    Game.win_con_general_eval()
+    return(Game.red_wins, Game.yellow_wins, Game.draw)
+
+def game_interval(Game):
+    
+    display(Game.board, Game.side)
+    # Game.win_con_general_eval()
     if Game.draw:
         print("Game drawed")
         return True
@@ -121,10 +123,10 @@ def game_interval():
         return True
     
     return False
-
-Game = gp.Game(setup.board_generation())
-
   
+# Game = gp.Game([[1, 0, 1, 0, 1, 0, 1], [0, 0, 0, None, 1, 0, None], [0, 0, 1, None, 0, 1, None], [1, 1, 1, None, 0, 0, None], [1, 1, 1, None, 0, 1, None], [0, 0, 1, None, 1, 0, None]], side= 1)
+# Game.update_win_con((5,2))
+# print(Game)
 computer_vs_computer()
 # player_vs_computer()
 # player_vs_player()
