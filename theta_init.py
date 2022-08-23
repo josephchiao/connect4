@@ -26,4 +26,4 @@ def create_file(theta_1_size, theta_2_size, theta_3_size, file_name = "nn_theta_
 
 
 
-create_file((85, 300), (301, 300), (301, 1))
+# create_file((85, 300), (301, 300), (301, 1))
