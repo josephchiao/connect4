@@ -1,4 +1,3 @@
-from oct2py import octave
 import numpy as np
 import os
 import random
@@ -6,7 +5,7 @@ import time
 import shutil
 import theta_init
 
-def theta_init(Theta_1_size, Theta_2_size, Theta_3_size, n):
+def theta_generate(Theta_1_size, Theta_2_size, Theta_3_size, n):
 
     folder = '/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data'
     for filename in os.listdir(folder):
@@ -20,7 +19,8 @@ def theta_init(Theta_1_size, Theta_2_size, Theta_3_size, n):
             print('Failed to delete %s. Reason: %s' % (file_path, e))
 
     for dataset in range(n):
-        theta_init.create_file(Theta_1_size, Theta_2_size, Theta_3_size, file_name = f"nn_theta_set_{dataset}.npz")
+        theta_init.create_file(Theta_1_size, Theta_2_size, Theta_3_size, file_name = f"/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data/nn_theta_set_{dataset}.npz")
+
 
 def tournament(rounds):
     for r in range(rounds):
@@ -53,10 +53,10 @@ def tournament(rounds):
 
 def multi_tournament(heats, survivor_num):
 
-    population = len(os.listdir('/home/joseph/Desktop/chess_neural_network/engine_data'))
-    print("Current population: ", population)
+    population = len(os.listdir('/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data'))
+    # print("Current population: ", population)
 
-    players = list(range(1, population + 1))
+    players = list(range(population))
     fight_sequense = list(players)
     random.shuffle(fight_sequense)
     fight_info = {players[i]: 0 for i in range(len(fight_sequense))}
