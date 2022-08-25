@@ -79,6 +79,7 @@ class Game:
         elif self.red_wins:
             return 0
 
+    #Archived
     def update_win_con_limited(self, placement):
         for direction in [
             (1, 0), 
@@ -96,7 +97,7 @@ class Game:
         if self.game_draw():
             self.draw = True
 
-
+    #Archived
     def win_con_general_eval(self):
         for rows in range(6):
             for position in range(7):
@@ -141,7 +142,16 @@ class Game:
         self.board[placement[0]][placement[1]] = self.side
         self.update_win_con(placement)
         self.side = 1 - self.side
-        return True        
+        return True  
+
+    def movement_undo(self, placement):
+
+        self.board[placement[0]][placement[1]] = None
+        self.red_wins = False
+        self.yellow_wins = False
+        self.draw = False
+        self.side = 1 - self.side
+
 
     def player_input(self):
 
