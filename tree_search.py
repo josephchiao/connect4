@@ -43,29 +43,38 @@ def nn_eval(game, theta_1, theta_2, theta_3):
 
     return feedforward_prop.feedforward_prop(x, theta_1, theta_2, theta_3)[0]
 
-def tree_search(game, depth, theta_1 = None, theta_2 = None, theta_3 = None, level = 0):
+def tree_search(game, depth, theta_1 = None, theta_2 = None, theta_3 = None, level = 0, move = None):
 
     '''Searches through all possible game states, and output the best one as a list of game states'''
     
     #If branch result in game conclusion, return as the end of branch
-    if game.win_con_eval():
-        return [game.win_con_eval(), [game]]
+    if game.win_con_eval() is not None:
+        return [game.win_con_eval(), move]
 
     #If branch reached deapth, return as the end of branch
     elif level == depth:
-        return [nn_eval(game, theta_1, theta_2, theta_3), [game]]
+        return [eval(game), move]
 
     #Recursive search function
     lines = []
-    for future_game in branch.branch_playable(game):
-        lines.append(tree_search(future_game, depth, theta_1, theta_2, theta_3, level = level + 1))
+    for future_move in branch.branch_avalibilities(game.board):
+        
+        game.computer_movement(future_move)
+        lines.append(tree_search(game, depth, theta_1, theta_2, theta_3, level = level + 1, move = future_move))
+        game.movement_undo(future_move)
+
 
     #Search for optimal branch in each depth
     function = [min, max][game.side]
     best_line = function(
         lines, 
         key=lambda line: line[0])
-        
-    best_line[1].insert(0, game)
+    
+    if level != 0:
 
-    return best_line
+        best_line.insert(1, move)
+        return best_line
+    
+    print(best_line)
+    return best_line[1]
+
