@@ -28,7 +28,8 @@ def board_branch(board, side):
     return possible_boards
 
 def branch_playable(game):
-    
+    '''Returns a list of possible future branches'''
+
     playable_branch = []
     legal_moves = branch_avalibilities(game.board)
     for possible_position in legal_moves:
