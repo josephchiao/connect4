@@ -7,6 +7,7 @@ def sigmoid(z):
 
 
 def feedforward_prop(X, Theta1, Theta2, Theta3):
+
     X = np.hstack((1, X))
 
     a_2 = sigmoid(X @ Theta1)

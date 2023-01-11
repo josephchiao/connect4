@@ -1,9 +1,13 @@
+import re
 import numpy as np
 import os
 import random
 import time
 import shutil
 import theta_init
+import interface
+import mutation
+import reproduction
 
 def theta_generate(Theta_1_size, Theta_2_size, Theta_3_size, n):
 
@@ -22,67 +26,78 @@ def theta_generate(Theta_1_size, Theta_2_size, Theta_3_size, n):
         theta_init.create_file(Theta_1_size, Theta_2_size, Theta_3_size, file_name = f"/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data/nn_theta_set_{dataset}.npz")
 
 
-def tournament(rounds):
-    for r in range(rounds):
-        population = len(os.listdir('/home/joseph/Desktop/chess_neural_network/engine_data'))
-        parity_bins = [[], []]
-        for i in range(population // 2):
-            i = (i + 1) * 2
+# def tournament(rounds):
+#     for r in range(rounds):
+#         population = len(os.listdir('/home/joseph/Desktop/chess_neural_network/engine_data'))
+#         parity_bins = [[], []]
+#         for i in range(population // 2):
+#             i = (i + 1) * 2
 
-            print(i, " vs ", (i - 1))
+#             print(i, " vs ", (i - 1))
 
-            winner, loser, win_state = fight.fight([i, i - 1])
-            os.remove(f"/home/joseph/Desktop/chess_neural_network/engine_data/neural_net_dataset_{loser}.mat")
-            parity_bins[winner % 2].append(winner)
+#             winner, loser, win_state = fight.fight([i, i - 1])
+#             os.remove(f"/home/joseph/Desktop/chess_neural_network/engine_data/neural_net_dataset_{loser}.mat")
+#             parity_bins[winner % 2].append(winner)
 
-        folder = '/home/joseph/Desktop/chess_neural_network/engine_data/'
-        if 1 in parity_bins[1]:
-            new_num = population + 1 + population % 2
-            os.rename(f"/home/joseph/Desktop/chess_neural_network/engine_data/neural_net_dataset_{1}.mat", f"/home/joseph/Desktop/chess_neural_network/engine_data/neural_net_dataset_{new_num}.mat")
-            parity_bins[1].remove(1)
-            parity_bins[1].append(new_num)
+#         folder = '/home/joseph/Desktop/chess_neural_network/engine_data/'
+#         if 1 in parity_bins[1]:
+#             new_num = population + 1 + population % 2
+#             os.rename(f"/home/joseph/Desktop/chess_neural_network/engine_data/neural_net_dataset_{1}.mat", f"/home/joseph/Desktop/chess_neural_network/engine_data/neural_net_dataset_{new_num}.mat")
+#             parity_bins[1].remove(1)
+#             parity_bins[1].append(new_num)
 
-        for x in range(population // 2):
-            bin = parity_bins[x % 2]
-            if len(bin) == 0:
-                bin = parity_bins[x % 2 - 1]
+#         for x in range(population // 2):
+#             bin = parity_bins[x % 2]
+#             if len(bin) == 0:
+#                 bin = parity_bins[x % 2 - 1]
             
-            os.rename(f"/home/joseph/Desktop/chess_neural_network/engine_data/neural_net_dataset_{bin[0]}.mat", f"/home/joseph/Desktop/chess_neural_network/engine_data/neural_net_dataset_{x + 1}.mat")
-            bin.pop(0)
+#             os.rename(f"/home/joseph/Desktop/chess_neural_network/engine_data/neural_net_dataset_{bin[0]}.mat", f"/home/joseph/Desktop/chess_neural_network/engine_data/neural_net_dataset_{x + 1}.mat")
+#             bin.pop(0)
 
 
-def multi_tournament(heats, survivor_num):
+def multi_tournament_phase_1(heats, survivor_num, nn_depth, random_depth):
+
+    red_win_stat = 0
+    yellow_win_stat = 0
+    win_ratio = None
+    draw_stat = 0
 
     population = len(os.listdir('/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data'))
     # print("Current population: ", population)
 
     players = list(range(population))
     fight_sequense = list(players)
-    random.shuffle(fight_sequense)
     fight_info = {players[i]: 0 for i in range(len(fight_sequense))}
 
     for heat in range(heats):
         for round in range(population):
-            player_1 = fight_sequense[round]
-            player_2 = fight_sequense[(round + heat + 1) % population]
+            player = fight_sequense[round]
             
-            print(player_1, " vs ", player_2)
-            print(f"Heat: {heat + 1} / {heats}")
-            print(f"Round: {round + 1} / {population}")
+            print(f"Heat: {heat + 1} / {heats}", f"       Round: {round + 1} / {population}")
 
-            winner, loser, win_state = fight.fight([player_1, player_2])
+            red_win, yellow_win, draw = interface.nn_vs_random(player, nn_depth, random_depth)
 
-            if win_state:
-                fight_info[winner] += 1
-                fight_info[loser] -= 1
-            else:
-                fight_info[winner] += 0.1
-                fight_info[loser] -= 0.1
-    
+            if red_win:
+                fight_info[player] -= 1
+                red_win_stat += 1
+            elif yellow_win:
+                fight_info[player] += 1
+                yellow_win_stat += 1
+            elif draw:
+                fight_info[player] -= 0.25
+                draw_stat += 1
+            
+            if red_win_stat != 0:
+                win_ratio = yellow_win_stat/red_win_stat
+
+            print("Red wins = ", red_win_stat, "   Yellow wins = ", yellow_win_stat, "   Draws = ", draw_stat, "   Win ratio = ", win_ratio)
+
     print(fight_info)
 
     strongest = max(fight_info, key = fight_info.get)
-    folder = '/home/joseph/Desktop/chess_neural_network/elite_data/'
+    print(strongest)
+    
+    folder = '/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_elite_data'
     for filename in os.listdir(folder):
         file_path = os.path.join(folder, filename)
         try:
@@ -93,9 +108,9 @@ def multi_tournament(heats, survivor_num):
         except Exception as e:
             print('Failed to delete %s. Reason: %s' % (file_path, e))
 
-    if strongest != 1:
-        shutil.copyfile(f'/home/joseph/Desktop/chess_neural_network/engine_data/neural_net_dataset_{strongest}.mat', 
-                        f'/home/joseph/Desktop/chess_neural_network/engine_data/neural_net_dataset_{1}.mat'
+    
+    shutil.copyfile(f'/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data/nn_theta_set_{strongest}.npz', 
+                    f'/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_elite_data/nn_theta_set_0.npz'
     )
     
     players.sort(key = lambda player: fight_info[player], reverse = True)
@@ -106,15 +121,16 @@ def multi_tournament(heats, survivor_num):
     print("number of survivors: ", len(survivors))
 
     for player in death:
-        os.remove(f"/home/joseph/Desktop/chess_neural_network/engine_data/neural_net_dataset_{player}.mat")
+        os.remove(f"/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data/nn_theta_set_{player}.npz")
     
     survivors.sort()
-    n = 1
+    n = 0
     for player in survivors:
-        os.rename(f"/home/joseph/Desktop/chess_neural_network/engine_data/neural_net_dataset_{player}.mat", f"/home/joseph/Desktop/chess_neural_network/engine_data/neural_net_dataset_{n}.mat")
+        os.rename(f"/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data/nn_theta_set_{player}.npz", 
+                  f"/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data/nn_theta_set_{n}.npz")
         n += 1
     
-    folder = '/home/joseph/Desktop/chess_neural_network/parent_engine_data/'
+    folder = '/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_parent_data'
     for filename in os.listdir(folder):
         file_path = os.path.join(folder, filename)
         try:
@@ -125,8 +141,8 @@ def multi_tournament(heats, survivor_num):
         except Exception as e:
             print('Failed to delete %s. Reason: %s' % (file_path, e))
 
-    source = '/home/joseph/Desktop/chess_neural_network/engine_data/'
-    destination = '/home/joseph/Desktop/chess_neural_network/parent_engine_data/'
+    source = '/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data/'
+    destination = '/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_parent_data/'
   
     allfiles = os.listdir(source)
     population = len(allfiles)
@@ -135,6 +151,121 @@ def multi_tournament(heats, survivor_num):
     for f in allfiles:
         shutil.move(source + f, destination + f)
 
+
+def multi_tournament_phase_2(heats, survivor_num, nn_depth, random_depth, previous_eval):
+
+    red_win_stat = 0
+    yellow_win_stat = 0
+    win_ratio = None
+    draw_stat = 0
+
+    population = len(os.listdir('/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data'))
+    # print("Current population: ", population)
+
+    fight_sequense = list(range(population))
+    fight_info = {fight_sequense[i]: 0 for i in range(len(fight_sequense))}
+
+    for heat in range(heats):
+        for round in range(population):
+            player = fight_sequense[round]
+            
+            print(f"Heat: {heat + 1} / {heats}", f"       Round: {round + 1} / {population}")
+
+            red_win, yellow_win, draw = interface.nn_vs_nn(player, heat, nn_depth, random_depth)
+
+            if red_win:
+                fight_info[player] -= 1
+                red_win_stat += 1
+            elif yellow_win:
+                fight_info[player] += 1
+                yellow_win_stat += 1
+            elif draw:
+                fight_info[player] -= 0.25
+                draw_stat += 1
+            
+            if red_win_stat != 0:
+                win_ratio = yellow_win_stat/red_win_stat
+
+            print("Red wins = ", red_win_stat, "   Yellow wins = ", yellow_win_stat, "   Draws = ", draw_stat, "   Win ratio = ", win_ratio)
+
+    print(fight_info)
+
+    strongest = max(fight_info, key = fight_info.get)
+    print(strongest)
+    
+    folder = '/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_elite_data'
+    for filename in os.listdir(folder):
+        file_path = os.path.join(folder, filename)
+        try:
+            if os.path.isfile(file_path) or os.path.islink(file_path):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+        except Exception as e:
+            print('Failed to delete %s. Reason: %s' % (file_path, e))
+
+    
+    shutil.copyfile(f'/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data/nn_theta_set_{strongest}.npz', 
+                    f'/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_elite_data/nn_theta_set_0.npz'
+    )
+    
+    fight_sequense.sort(key = lambda player: fight_info[player], reverse = True)
+    survivors = fight_sequense[:survivor_num]
+    trainer = fight_sequense[:heats]
+    death = fight_sequense[survivor_num:]
+    
+    print(survivors)
+    print("number of survivors: ", len(survivors))
+
+    folder = '/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_trainer_data'
+    for filename in os.listdir(folder):
+        file_path = os.path.join(folder, filename)
+        try:
+            if os.path.isfile(file_path) or os.path.islink(file_path):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+        except Exception as e:
+            print('Failed to delete %s. Reason: %s' % (file_path, e))
+
+    for player in trainer:
+        shutil.copyfile(f'/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data/nn_theta_set_{strongest}.npz', 
+                    f'/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_elite_data/nn_theta_set_0.npz'
+    )
+
+    for player in death:
+        os.remove(f"/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data/nn_theta_set_{player}.npz")
+    
+    survivors.sort()
+    n = 0
+    for player in survivors:
+        os.rename(f"/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data/nn_theta_set_{player}.npz", 
+                  f"/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data/nn_theta_set_{n}.npz")
+        n += 1
+    
+    folder = '/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_parent_data'
+    for filename in os.listdir(folder):
+        file_path = os.path.join(folder, filename)
+        try:
+            if os.path.isfile(file_path) or os.path.islink(file_path):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+        except Exception as e:
+            print('Failed to delete %s. Reason: %s' % (file_path, e))
+
+    source = '/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data/'
+    destination = '/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_parent_data/'
+  
+    allfiles = os.listdir(source)
+    population = len(allfiles)
+
+    print("Population: ", population)
+  
+    for f in allfiles:
+        shutil.move(source + f, destination + f)
+
+    return eval
 
 def multi_tournament_self_train(heats, survivor_num, heat_size):
 
@@ -250,19 +381,11 @@ def multi_tournament_self_train(heats, survivor_num, heat_size):
     for f in allfiles:
         shutil.move(source + f, destination + f)
 
-
-def reproduction(population):
-    octave.addpath("/home/joseph/Desktop/chess_neural_network")
-    for datasets in range(population // 4):
-        dataset_1 = (datasets + 1) * 2
-        dataset_2 = dataset_1 - 1
-        n = octave.reproduction(dataset_1, dataset_2, dataset_1, dataset_2)
-
-def multi_reproduction(goal_population):
+def multi_reproduction(goal_population, population):
 
     current_population = 0
 
-    folder = '/home/joseph/Desktop/chess_neural_network/engine_data/'
+    folder = '/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data'
     for filename in os.listdir(folder):
         file_path = os.path.join(folder, filename)
         try:
@@ -273,63 +396,59 @@ def multi_reproduction(goal_population):
         except Exception as e:
             print('Failed to delete %s. Reason: %s' % (file_path, e))
     
-    population = len(os.listdir('/home/joseph/Desktop/chess_neural_network/parent_engine_data/'))
     while current_population < goal_population:
 
-        parent_1 = random.randint(1, population)
+        parent_1 = random.randint(0, population - 1)
 
-        parent_2 = random.randint(1, population)
+        parent_2 = random.randint(0, population - 1)
         while parent_2 == parent_1:
-            parent_2 = random.randint(1, population)
+            parent_2 = random.randint(0, population - 1)
 
-        n = octave.reproduction_single(parent_1, parent_2, current_population + 1)
+        theta_1, theta_2, theta_3 = reproduction.basic_reproduction(parent_1, parent_2)
+        np.savez(f'/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data/nn_theta_set_{current_population}.npz', Theta1 = theta_1, Theta2 = theta_2, Theta3 = theta_3)
         current_population += 1
 
+    shutil.copyfile(f'/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_elite_data/nn_theta_set_0.npz', 
+                    f'/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data/nn_theta_set_0.npz'
+    )
 
-def mutation(mutation_rate):
+def mutate(mutation_rate):
 
-    allfiles = os.listdir('/home/joseph/Desktop/chess_neural_network/engine_data/')
+    allfiles = os.listdir('/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data')
     population = len(allfiles)
 
-    for dataset in range(population//2):
-        n = octave.mutation(dataset + 1, mutation_rate)
+    for dataset in range(population):
+        mutation.point_mutaion(dataset, mutation_rate)
 
-def generation_sequence(heats, survivor_num, goal_population, mutation_rate, self_training, heat_size):
-    if self_training:
-        multi_tournament_self_train(heats, survivor_num, heat_size)
-    else:
-        multi_tournament(heats, survivor_num)
+def generation_sequence(heats, survivor_num, goal_population, mutation_rate, training_phase, heat_size, nn_depth, random_depth):
     
-    # multi_reproduction(goal_population)
-    # mutation(mutation_rate)
-    source = '/home/joseph/Desktop/chess_neural_network/parent_engine_data/'
-    destination = '/home/joseph/Desktop/chess_neural_network/engine_data/'
-  
-    allfiles = os.listdir(source)
-  
-    for f in allfiles:
-        shutil.move(source + f, destination + f)
+    if training_phase == 1:
+        multi_tournament_phase_1(heats, survivor_num, nn_depth, random_depth)
+    elif training_phase == 2:
+        multi_tournament_phase_2(heats, survivor_num, nn_depth, random_depth)
     
-def genetic_algorithm(population, survivor_num, generations, descend_generations, heats, mutation_rate, layer_1, layer_2, self_training = False, heat_size = 1):
+    multi_reproduction(goal_population, survivor_num)
+    mutate(mutation_rate)
+    
+def genetic_algorithm(survivor_num, generations, heats, mutation_rate, nn_depth, random_depth, training_phase = 1, heat_size = 1):
+
+    allfiles = os.listdir('/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data')
+    population = len(allfiles)
 
     tic = time.perf_counter()
-    theta_init(np.array([770, layer_1]), np.array([layer_1 + 1, layer_2]), np.array([layer_2 + 1, 1.]), population)
-    octave.addpath("/home/joseph/Desktop/chess_neural_network")
 
-    for i in range(generations - 1):
+    for i in range(generations):
         print(f"Gen: {i + 1} / {generations}")
-        generation_sequence(heats, survivor_num, population, mutation_rate, self_training, heat_size) 
+        generation_sequence(heats, survivor_num, population, mutation_rate, training_phase, heat_size, nn_depth, random_depth) 
         shutil.copy(
-            f"/home/joseph/Desktop/chess_neural_network/engine_data/neural_net_dataset_1.mat", 
-            f"/home/joseph/Desktop/chess_neural_network/best_of_generations/neural_net_dataset_{i + 1}.mat"
+            f"/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data/nn_theta_set_1.npz", 
+            f"/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/generation_best_data/nn_theta_set_{i + 1}.npz"
         )
-
-    print(f"Gen: {generations} / {generations}")
-    generation_sequence(heats, 1, population, mutation_rate, self_training, heat_size) 
-    shutil.copy(
-        f"/home/joseph/Desktop/chess_neural_network/engine_data/neural_net_dataset_1.mat", 
-        f"/home/joseph/Desktop/chess_neural_network/best_of_generations/neural_net_dataset_{generations}.mat"    
-    )
 
     toc = time.perf_counter()
     print(toc - tic)
+
+
+# multi_tournament(2, 8)
+# theta_generate((85,25), (26,25), (26, 1), 256)
+genetic_algorithm(16, 100, 5, 0.005, 2, 5)
