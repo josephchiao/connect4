@@ -54,7 +54,7 @@ def player_vs_computer(nn_depth):
 
     Game = gp.Game(setup.board_generation())
 
-    thetas = np.load(f'/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_elite_data/nn_theta_set_0.npz')
+    thetas = np.load(f'/home/joseph/Desktop/Connect 4/connect4/genetic_elite_data/nn_theta_set_0.npz')
     theta_1 = thetas['Theta1']
     theta_2 = thetas['Theta2']
     theta_3 = thetas['Theta3']
@@ -101,7 +101,7 @@ def connect_4_cheater(nn_depth):
                     [None, None, None, 1, None, 0, None],
                     [None, None, None, 0, None, 1, None]])
 
-    thetas = np.load(f'/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_elite_data/nn_theta_set_0.npz')
+    thetas = np.load(f'/home/joseph/Desktop/Connect 4/connect4/genetic_elite_data/nn_theta_set_0.npz')
     theta_1 = thetas['Theta1']
     theta_2 = thetas['Theta2']
     theta_3 = thetas['Theta3']
@@ -143,7 +143,7 @@ def nn_vs_random(theta_set, nn_depth, random_depth):
     
     Game = gp.Game(setup.board_generation())
 
-    thetas = np.load(f'/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data/nn_theta_set_{theta_set}.npz')
+    thetas = np.load(f'/home/joseph/Desktop/Connect 4/connect4/genetic_training_data/nn_theta_set_{theta_set}.npz')
     theta_1 = thetas['Theta1']
     theta_2 = thetas['Theta2']
     theta_3 = thetas['Theta3']
@@ -169,12 +169,12 @@ def nn_vs_nn(player_1, player_2, nn_depth, trainer_depth):
 
     Game = gp.Game(setup.board_generation())
 
-    p1_thetas = np.load(f'/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data/nn_theta_set_{player_1}.npz')
+    p1_thetas = np.load(f'/home/joseph/Desktop/Connect 4/connect4/genetic_training_data/nn_theta_set_{player_1}.npz')
     p1_theta_1 = p1_thetas['Theta1']
     p1_theta_2 = p1_thetas['Theta2']
     p1_theta_3 = p1_thetas['Theta3']
 
-    p2_thetas = np.load(f'/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data/nn_theta_set_{player_2}.npz')
+    p2_thetas = np.load(f'/home/joseph/Desktop/Connect 4/connect4/genetic_training_data/nn_theta_set_{player_2}.npz')
     p2_theta_1 = p2_thetas['Theta1']
     p2_theta_2 = p2_thetas['Theta2']
     p2_theta_3 = p2_thetas['Theta3']
@@ -200,7 +200,7 @@ def nn_result_testing():
 
     Game = gp.Game(setup.board_generation())
 
-    thetas = np.load(f'/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_elite_data/nn_theta_set_0.npz')
+    thetas = np.load(f'/home/joseph/Desktop/Connect 4/connect4/genetic_elite_data/nn_theta_set_0.npz')
     theta_1 = thetas['Theta1']
     theta_2 = thetas['Theta2']
     theta_3 = thetas['Theta3']
