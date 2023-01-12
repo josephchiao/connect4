@@ -451,4 +451,4 @@ def genetic_algorithm(survivor_num, generations, heats, mutation_rate, nn_depth,
 
 # multi_tournament(2, 8)
 # theta_generate((85,25), (26,25), (26, 1), 256)
-genetic_algorithm(16, 100, 5, 0.005, 2, 5)
+genetic_algorithm(16, 100, 5, 0.005, 3, 6)

@@ -226,16 +226,16 @@ def game_interval(Game):
     # display(Game.board, Game.side)
     # Game.win_con_general_eval()
     if Game.draw:
-        print("Game drawed")
-        display(Game.board, Game.side)
+        # print("Game drawed")
+        # display(Game.board, Game.side)
         return True
     elif Game.red_wins:
-        print("Red wins")
-        display(Game.board, Game.side)
+        # print("Red wins")
+        # display(Game.board, Game.side)
         return True
     elif Game.yellow_wins:
-        print("Yellow wins")
-        display(Game.board, Game.side)
+        # print("Yellow wins")
+        # display(Game.board, Game.side)
         return True
     
     return False
@@ -244,7 +244,7 @@ def game_interval(Game):
 # Game.update_win_con((5,2))
 # print(Game)
 # computer_vs_computer()
-player_vs_computer(7)
+# player_vs_computer(7)
 # player_vs_player()
 # best_line = ts.tree_search(Game, 4)
 # print(f"eval: {best_line[0]}")

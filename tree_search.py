@@ -138,7 +138,7 @@ def alpha_beta_tree_search(game, depth, mode = "combinatorics", theta_1 = None, 
         alpha.insert(1, move)
         return alpha
     
-    print(alpha)
+    # print(alpha)
     return alpha[1]
 
 
