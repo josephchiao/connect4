@@ -3,7 +3,7 @@ import numpy as np
 import random
 
 def point_mutaion(dataset, mutaion_rate):
-    thetas = np.load(f'/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data/nn_theta_set_{dataset}.npz')
+    thetas = np.load(f'/home/joseph/Desktop/Connect 4/connect4/genetic_training_data/nn_theta_set_{dataset}.npz')
     theta_1 = thetas['Theta1'].flatten()
     theta_2 = thetas['Theta2'].flatten()
     theta_3 = thetas['Theta3'].flatten()
@@ -18,5 +18,5 @@ def point_mutaion(dataset, mutaion_rate):
     theta_2 = np.array(combined_theta[len(theta_1):(len(theta_1) + len(theta_2))]).reshape(thetas['Theta2'].shape)
     theta_3 = np.array(combined_theta[(len(theta_1) + len(theta_2)):(len(theta_1) + len(theta_2) + len(theta_3))]).reshape(thetas['Theta3'].shape)
     
-    np.savez(f'/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data/nn_theta_set_{dataset}.npz', Theta1 = theta_1, Theta2 = theta_2, Theta3 = theta_3)
+    np.savez(f'/home/joseph/Desktop/Connect 4/connect4/genetic_training_data/nn_theta_set_{dataset}.npz', Theta1 = theta_1, Theta2 = theta_2, Theta3 = theta_3)
 
