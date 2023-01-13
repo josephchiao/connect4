@@ -294,8 +294,8 @@ def genetic_algorithm(survivor_num, generations, heats, mutation_rate, nn_depth,
         print(f"Gen: {i + 1} / {generations}")
         generation_sequence(heats, survivor_num, population, mutation_rate, training_phase, heat_size, nn_depth, random_depth) 
         shutil.copyfile(
-            f"/home/joseph/Desktop/Connect 4/connect4/genetic_training_data/nn_theta_set_1.npz", 
-            f"/home/joseph/Desktop/Connect 4/connect4/genertion_best_data/nn_theta_set_{i + 1}.npz"
+            f"/home/joseph/Desktop/Connect 4/connect4/genetic_training_data/nn_theta_set_0.npz", 
+            f"/home/joseph/Desktop/Connect 4/connect4/generation_best_data/nn_theta_set_{i}.npz"
         )
 
     toc = time.perf_counter()
