@@ -175,8 +175,7 @@ def multi_tournament_phase_2(heats, survivor_num, nn_depth, random_depth):
 
     
     shutil.copyfile(f'/home/joseph/Desktop/Connect 4/connect4/genetic_training_data/nn_theta_set_{strongest}.npz', 
-                    f'/home/joseph/Desktop/Connect 4/connect4/genetic_elite_data/nn_theta_set_0.npz'
-    )
+                    f'/home/joseph/Desktop/Connect 4/connect4/genetic_elite_data/nn_theta_set_0.npz')
     
     fight_sequense.sort(key = lambda player: fight_info[player], reverse = True)
     survivors = fight_sequense[:survivor_num]
@@ -197,10 +196,11 @@ def multi_tournament_phase_2(heats, survivor_num, nn_depth, random_depth):
         except Exception as e:
             print('Failed to delete %s. Reason: %s' % (file_path, e))
 
+    n = 0
     for player in trainer:
         shutil.copyfile(f'/home/joseph/Desktop/Connect 4/connect4/genetic_training_data/nn_theta_set_{strongest}.npz', 
-                    f'/home/joseph/Desktop/Connect 4/connect4/genetic_trainer_data/nn_theta_set_0.npz'
-    )
+                    f'/home/joseph/Desktop/Connect 4/connect4/genetic_trainer_data/nn_theta_set_{n}.npz')
+        n += 1
 
     for player in death:
         os.remove(f"/home/joseph/Desktop/Connect 4/connect4/genetic_training_data/nn_theta_set_{player}.npz")
