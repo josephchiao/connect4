@@ -5,6 +5,8 @@ import time
 def sigmoid(z):
     return 1.0 / (1.0 + np.exp(-z))
 
+def ReLU(x):
+    return x * (x > 0)
 
 def feedforward_prop(X, Theta1, Theta2, Theta3):
 
@@ -20,5 +22,3 @@ def feedforward_prop(X, Theta1, Theta2, Theta3):
 
     return sigmoid(a_3 @ Theta3)
 
-def ReLU(x):
-    return x * (x > 0)
