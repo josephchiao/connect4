@@ -138,7 +138,7 @@ def alpha_beta_tree_search(game, depth, mode = "combinatorics", theta_1 = None, 
         alpha.insert(1, move)
         return alpha
     
-    # print(alpha)
+    print(alpha)
     return alpha[1]
 
 
@@ -154,3 +154,12 @@ def alpha_compare(alpha, beta, side):
         return True
 
     return False
+
+def branch_priority(game, theta_1, theta_2, theta_3):
+    interst_level = {i: None for i in range(7)}
+    i = 0
+    for future_move in branch.branch_avalibilities(game.board):
+        interst_level.append(tree_search(game, 0, "nn", theta_1, theta_2, theta_3, level = 0, move = future_move))
+        i += 1
+
+
