@@ -20,3 +20,18 @@ def point_mutaion(dataset, mutaion_rate):
     
     np.savez(f'/home/joseph/Desktop/Connect 4/connect4/genetic_training_data/nn_theta_set_{dataset}.npz', Theta1 = theta_1, Theta2 = theta_2, Theta3 = theta_3)
 
+def gaussian_mutation(dataset, standard_deviation):
+    thetas = np.load(f'/home/joseph/Desktop/Connect 4/connect4/genetic_training_data/nn_theta_set_{dataset}.npz')
+    theta_1 = thetas['Theta1'].flatten()
+    theta_2 = thetas['Theta2'].flatten()
+    theta_3 = thetas['Theta3'].flatten()
+    combined_theta = np.concatenate((theta_1, theta_2, theta_3), axis = None)
+
+    for i in range(len(combined_theta)):
+        combined_theta[i] += random.gauss(0, standard_deviation)
+
+    theta_1 = np.array(combined_theta[0:len(theta_1)]).reshape(thetas['Theta1'].shape)
+    theta_2 = np.array(combined_theta[len(theta_1):(len(theta_1) + len(theta_2))]).reshape(thetas['Theta2'].shape)
+    theta_3 = np.array(combined_theta[(len(theta_1) + len(theta_2)):(len(theta_1) + len(theta_2) + len(theta_3))]).reshape(thetas['Theta3'].shape)
+
+    np.savez(f'/home/joseph/Desktop/Connect 4/connect4/genetic_training_data/nn_theta_set_{dataset}.npz', Theta1 = theta_1, Theta2 = theta_2, Theta3 = theta_3)
