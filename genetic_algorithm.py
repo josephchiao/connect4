@@ -239,6 +239,7 @@ def multi_reproduction(goal_population, population):
     current_population = 0
 
     folder = '/home/joseph/Desktop/Connect 4/connect4/genetic_training_data'
+    
     for filename in os.listdir(folder):
         file_path = os.path.join(folder, filename)
         try:
@@ -304,7 +305,3 @@ def genetic_algorithm(survivor_num, generations, heats, mutation_rate, nn_depth,
 
 # theta_generate((85,25), (26,25), (26, 1), 256)
 genetic_algorithm(16, 100, 5, 0.005, 2, 4, training_phase=2)
-
-
-# /home/joseph/Desktop/Connect 4/
-# /home/joseph/Desktop/Connect 4/

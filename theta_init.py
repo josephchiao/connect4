@@ -24,6 +24,4 @@ def create_file(theta_1_size, theta_2_size, theta_3_size, file_name = "nn_theta_
 
     np.savez(file_name, Theta1 = theta_1, Theta2 = theta_2, Theta3 = theta_3)
 
-
-
 # create_file((85, 300), (301, 300), (301, 1))

@@ -165,4 +165,3 @@ class Game:
                 player_input = int(player_input) - 1
 
         return player_input
-    

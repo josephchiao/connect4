@@ -21,4 +21,3 @@ def feedforward_prop(X, Theta1, Theta2, Theta3):
     a_3 = np.hstack((1, a_3))
 
     return sigmoid(a_3 @ Theta3)
-
