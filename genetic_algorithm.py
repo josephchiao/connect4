@@ -7,10 +7,11 @@ import theta_init
 import interface
 import mutation
 import reproduction
+from matplotlib import pyplot as plt
 
 def theta_generate(Theta_1_size, Theta_2_size, Theta_3_size, n):
 
-    folder = '/home/joseph/Desktop/Connect 4/connect4/genetic_training_data'
+    folder = '/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data'
     for filename in os.listdir(folder):
         file_path = os.path.join(folder, filename)
         try:
@@ -22,7 +23,22 @@ def theta_generate(Theta_1_size, Theta_2_size, Theta_3_size, n):
             print('Failed to delete %s. Reason: %s' % (file_path, e))
 
     for dataset in range(n):
-        theta_init.create_file(Theta_1_size, Theta_2_size, Theta_3_size, file_name = f"/home/joseph/Desktop/Connect 4/connect4/genetic_training_data/nn_theta_set_{dataset}.npz")
+        theta_init.create_file(Theta_1_size, Theta_2_size, Theta_3_size, file_name = f"/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data/nn_theta_set_{dataset}.npz", init_type = "logistic")
+
+def theta_review(theta_set):
+    # theta = np.load("/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/manuel_best_copy/Nov 27 depth 6 unbeatable")
+    theta = np.load(f"/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data/nn_theta_set_{theta_set}.npz")
+    print(theta['Theta1'])
+    print(theta['Theta2'])
+    print(theta['Theta3'])
+
+    y = np.arange(1,len(theta['Theta1'])) 
+    x = theta['Theta1'][y]
+    plt.title("data review") 
+    plt.xlabel("x") 
+    plt.ylabel("y") 
+    plt.plot(x, y, "ob") 
+    plt.show()
 
 def multi_tournament_phase_1(heats, survivor_num, nn_depth, random_depth):
 
@@ -303,5 +319,6 @@ def genetic_algorithm(survivor_num, generations, heats, mutation_rate, nn_depth,
     print(toc - tic)
 
 
-# theta_generate((85,25), (26,25), (26, 1), 256)
-genetic_algorithm(16, 100, 5, 0.005, 2, 4, training_phase=2)
+# theta_generate((85,50), (51,50), (51, 1), 256)
+# genetic_algorithm(16, 100, 5, 0.005, 2, 4, training_phase=2)
+theta_review(0)
