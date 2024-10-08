@@ -3,13 +3,15 @@ import os
 import random
 import time
 import shutil
-import theta_init
+import archive.theta_init as theta_init
 import interface
 import mutation
 import reproduction
-from matplotlib import pyplot as plt
+import matplotlib.pyplot as plt # type: ignore
 
 def theta_generate(Theta_1_size, Theta_2_size, Theta_3_size, n):
+
+    """For initializing training set"""
 
     folder = '/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data'
     for filename in os.listdir(folder):
@@ -26,18 +28,22 @@ def theta_generate(Theta_1_size, Theta_2_size, Theta_3_size, n):
         theta_init.create_file(Theta_1_size, Theta_2_size, Theta_3_size, file_name = f"/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data/nn_theta_set_{dataset}.npz", init_type = "logistic")
 
 def theta_review(theta_set):
+
+    """Display purposes"""
+
+    theta = np.load(f"/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_elite_data/nn_theta_set_0.npz")
     # theta = np.load("/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/manuel_best_copy/Nov 27 depth 6 unbeatable")
-    theta = np.load(f"/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data/nn_theta_set_{theta_set}.npz")
+    # theta = np.load(f"/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data/nn_theta_set_{theta_set}.npz")
     print(theta['Theta1'])
     print(theta['Theta2'])
     print(theta['Theta3'])
 
-    y = np.arange(1,len(theta['Theta1'])) 
-    x = theta['Theta1'][y]
-    plt.title("data review") 
-    plt.xlabel("x") 
-    plt.ylabel("y") 
-    plt.plot(x, y, "ob") 
+    y = np.arange(0, np.size(theta['Theta1'])) 
+    x = theta['Theta1']
+    # print(np.size(x))
+    # print(np.size(y))
+
+    plt.scatter(x, y, s = 5)
     plt.show()
 
 def multi_tournament_phase_1(heats, survivor_num, nn_depth, random_depth):
@@ -47,7 +53,7 @@ def multi_tournament_phase_1(heats, survivor_num, nn_depth, random_depth):
     win_ratio = None
     draw_stat = 0
 
-    population = len(os.listdir('/home/joseph/Desktop/Connect 4/connect4/genetic_training_data'))
+    population = len(os.listdir('/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data'))
     # print("Current population: ", population)
 
     players = list(range(population))
@@ -82,7 +88,7 @@ def multi_tournament_phase_1(heats, survivor_num, nn_depth, random_depth):
     strongest = max(fight_info, key = fight_info.get)
     print(strongest)
     
-    folder = '/home/joseph/Desktop/Connect 4/connect4/genetic_elite_data'
+    folder = '/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_elite_data'
     for filename in os.listdir(folder):
         file_path = os.path.join(folder, filename)
         try:
@@ -94,8 +100,8 @@ def multi_tournament_phase_1(heats, survivor_num, nn_depth, random_depth):
             print('Failed to delete %s. Reason: %s' % (file_path, e))
 
     
-    shutil.copyfile(f'/home/joseph/Desktop/Connect 4/connect4/genetic_training_data/nn_theta_set_{strongest}.npz', 
-                    f'/home/joseph/Desktop/Connect 4/connect4/genetic_elite_data/nn_theta_set_0.npz'
+    shutil.copyfile(f'/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data/nn_theta_set_{strongest}.npz', 
+                    f'/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_elite_data/nn_theta_set_0.npz'
     )
     
     players.sort(key = lambda player: fight_info[player], reverse = True)
@@ -106,16 +112,16 @@ def multi_tournament_phase_1(heats, survivor_num, nn_depth, random_depth):
     print("number of survivors: ", len(survivors))
 
     for player in death:
-        os.remove(f"/home/joseph/Desktop/Connect 4/connect4/genetic_training_data/nn_theta_set_{player}.npz")
+        os.remove(f"/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data/nn_theta_set_{player}.npz")
     
     survivors.sort()
     n = 0
     for player in survivors:
-        os.rename(f"/home/joseph/Desktop/Connect 4/connect4/genetic_training_data/nn_theta_set_{player}.npz", 
-                  f"/home/joseph/Desktop/Connect 4/connect4/genetic_training_data/nn_theta_set_{n}.npz")
+        os.rename(f"/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data/nn_theta_set_{player}.npz", 
+                  f"/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data/nn_theta_set_{n}.npz")
         n += 1
     
-    folder = '/home/joseph/Desktop/Connect 4/connect4/genetic_parent_data'
+    folder = '/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_parent_data'
     for filename in os.listdir(folder):
         file_path = os.path.join(folder, filename)
         try:
@@ -126,8 +132,8 @@ def multi_tournament_phase_1(heats, survivor_num, nn_depth, random_depth):
         except Exception as e:
             print('Failed to delete %s. Reason: %s' % (file_path, e))
 
-    source = '/home/joseph/Desktop/Connect 4/connect4/genetic_training_data/'
-    destination = '/home/joseph/Desktop/Connect 4/connect4/genetic_parent_data/'
+    source = '/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data/'
+    destination = '/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_parent_data/'
   
     allfiles = os.listdir(source)
     population = len(allfiles)
@@ -144,7 +150,7 @@ def multi_tournament_phase_2(heats, survivor_num, nn_depth, random_depth):
     win_ratio = None
     draw_stat = 0
 
-    population = len(os.listdir('/home/joseph/Desktop/Connect 4/connect4/genetic_training_data'))
+    population = len(os.listdir('/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data'))
     # print("Current population: ", population)
 
     fight_sequense = list(range(population))
@@ -178,7 +184,7 @@ def multi_tournament_phase_2(heats, survivor_num, nn_depth, random_depth):
     strongest = max(fight_info, key = fight_info.get)
     print(strongest)
     
-    folder = '/home/joseph/Desktop/Connect 4/connect4/genetic_elite_data'
+    folder = '/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_elite_data'
     for filename in os.listdir(folder):
         file_path = os.path.join(folder, filename)
         try:
@@ -190,8 +196,8 @@ def multi_tournament_phase_2(heats, survivor_num, nn_depth, random_depth):
             print('Failed to delete %s. Reason: %s' % (file_path, e))
 
     
-    shutil.copyfile(f'/home/joseph/Desktop/Connect 4/connect4/genetic_training_data/nn_theta_set_{strongest}.npz', 
-                    f'/home/joseph/Desktop/Connect 4/connect4/genetic_elite_data/nn_theta_set_0.npz')
+    shutil.copyfile(f'/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data/nn_theta_set_{strongest}.npz', 
+                    f'/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_elite_data/nn_theta_set_0.npz')
     
     fight_sequense.sort(key = lambda player: fight_info[player], reverse = True)
     survivors = fight_sequense[:survivor_num]
@@ -201,7 +207,7 @@ def multi_tournament_phase_2(heats, survivor_num, nn_depth, random_depth):
     print(survivors)
     print("number of survivors: ", len(survivors))
 
-    folder = '/home/joseph/Desktop/Connect 4/connect4/genetic_trainer_data'
+    folder = '/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_trainer_data'
     for filename in os.listdir(folder):
         file_path = os.path.join(folder, filename)
         try:
@@ -214,21 +220,21 @@ def multi_tournament_phase_2(heats, survivor_num, nn_depth, random_depth):
 
     n = 0
     for player in trainer:
-        shutil.copyfile(f'/home/joseph/Desktop/Connect 4/connect4/genetic_training_data/nn_theta_set_{strongest}.npz', 
-                    f'/home/joseph/Desktop/Connect 4/connect4/genetic_trainer_data/nn_theta_set_{n}.npz')
+        shutil.copyfile(f'/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data/nn_theta_set_{strongest}.npz', 
+                    f'/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_trainer_data/nn_theta_set_{n}.npz')
         n += 1
 
     for player in death:
-        os.remove(f"/home/joseph/Desktop/Connect 4/connect4/genetic_training_data/nn_theta_set_{player}.npz")
+        os.remove(f"/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data/nn_theta_set_{player}.npz")
     
     survivors.sort()
     n = 0
     for player in survivors:
-        os.rename(f"/home/joseph/Desktop/Connect 4/connect4/genetic_training_data/nn_theta_set_{player}.npz", 
-                  f"/home/joseph/Desktop/Connect 4/connect4/genetic_training_data/nn_theta_set_{n}.npz")
+        os.rename(f"/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data/nn_theta_set_{player}.npz", 
+                  f"/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data/nn_theta_set_{n}.npz")
         n += 1
     
-    folder = '/home/joseph/Desktop/Connect 4/connect4/genetic_parent_data'
+    folder = '/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_parent_data'
     for filename in os.listdir(folder):
         file_path = os.path.join(folder, filename)
         try:
@@ -239,8 +245,8 @@ def multi_tournament_phase_2(heats, survivor_num, nn_depth, random_depth):
         except Exception as e:
             print('Failed to delete %s. Reason: %s' % (file_path, e))
 
-    source = '/home/joseph/Desktop/Connect 4/connect4/genetic_training_data/'
-    destination = '/home/joseph/Desktop/Connect 4/connect4/genetic_parent_data/'
+    source = '/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data/'
+    destination = '/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_parent_data/'
   
     allfiles = os.listdir(source)
     population = len(allfiles)
@@ -254,7 +260,7 @@ def multi_reproduction(goal_population, population):
 
     current_population = 0
 
-    folder = '/home/joseph/Desktop/Connect 4/connect4/genetic_training_data'
+    folder = '/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data'
     
     for filename in os.listdir(folder):
         file_path = os.path.join(folder, filename)
@@ -275,16 +281,16 @@ def multi_reproduction(goal_population, population):
             parent_2 = random.randint(0, population - 1)
 
         theta_1, theta_2, theta_3 = reproduction.basic_reproduction(parent_1, parent_2)
-        np.savez(f'/home/joseph/Desktop/Connect 4/connect4/genetic_training_data/nn_theta_set_{current_population}.npz', Theta1 = theta_1, Theta2 = theta_2, Theta3 = theta_3)
+        np.savez(f'/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data/nn_theta_set_{current_population}.npz', Theta1 = theta_1, Theta2 = theta_2, Theta3 = theta_3)
         current_population += 1
 
-    shutil.copyfile(f'/home/joseph/Desktop/Connect 4/connect4/genetic_elite_data/nn_theta_set_0.npz', 
-                    f'/home/joseph/Desktop/Connect 4/connect4/genetic_training_data/nn_theta_set_0.npz'
+    shutil.copyfile(f'/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_elite_data/nn_theta_set_0.npz', 
+                    f'/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data/nn_theta_set_0.npz'
     )
 
 def mutate(mutation_rate):
 
-    allfiles = os.listdir('/home/joseph/Desktop/Connect 4/connect4/genetic_training_data')
+    allfiles = os.listdir('/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data')
     population = len(allfiles)
 
     for dataset in range(population):
@@ -302,7 +308,7 @@ def generation_sequence(heats, survivor_num, goal_population, mutation_rate, tra
     
 def genetic_algorithm(survivor_num, generations, heats, mutation_rate, nn_depth, random_depth, training_phase = 1, heat_size = 1):
 
-    allfiles = os.listdir('/home/joseph/Desktop/Connect 4/connect4/genetic_training_data')
+    allfiles = os.listdir('/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data')
     population = len(allfiles)
 
     tic = time.perf_counter()
@@ -311,8 +317,8 @@ def genetic_algorithm(survivor_num, generations, heats, mutation_rate, nn_depth,
         print(f"Gen: {i + 1} / {generations}")
         generation_sequence(heats, survivor_num, population, mutation_rate, training_phase, heat_size, nn_depth, random_depth) 
         shutil.copyfile(
-            f"/home/joseph/Desktop/Connect 4/connect4/genetic_training_data/nn_theta_set_0.npz", 
-            f"/home/joseph/Desktop/Connect 4/connect4/generation_best_data/nn_theta_set_{i}.npz"
+            f"/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/genetic_training_data/nn_theta_set_0.npz", 
+            f"/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network(Kai)/connect4/generation_best_data/nn_theta_set_{i}.npz"
         )
 
     toc = time.perf_counter()
@@ -321,4 +327,14 @@ def genetic_algorithm(survivor_num, generations, heats, mutation_rate, nn_depth,
 
 # theta_generate((85,50), (51,50), (51, 1), 256)
 # genetic_algorithm(16, 100, 5, 0.005, 2, 4, training_phase=2)
+
+
+# for i in range(4):
+#     fig = plt.figure(num = 100 - i)
+#     theta_review(100 - i)
+# plt.show()
+
 theta_review(0)
+
+
+

@@ -5,7 +5,9 @@ import copy
 
 
 def branch_avalibilities(board):
-    
+
+    '''Returns a list of possible future branches as moves'''
+
     legal_moves = []
     for move in range(7):
         if gp.Game(board).player_placement(move):
@@ -15,6 +17,8 @@ def branch_avalibilities(board):
     return legal_moves
 
 def board_branch(board, side):
+
+    '''Returns a list of possible future branches as board states'''
 
     possible_boards = []
 
@@ -28,7 +32,8 @@ def board_branch(board, side):
     return possible_boards
 
 def branch_playable(game):
-    '''Returns a list of possible future branches'''
+    
+    '''Returns a list of possible future branches as game states'''
 
     playable_branch = []
     legal_moves = branch_avalibilities(game.board)

@@ -14,10 +14,12 @@ def feedforward_prop(X, Theta1, Theta2, Theta3):
 
     a_2 = ReLU(X @ Theta1)
 
-    a_2 = np.hstack((1, a_2))
+    a_2_flat = np.hstack((1, a_2))
 
-    a_3 = sigmoid(a_2 @ Theta2)
+    a_3 = sigmoid(a_2_flat @ Theta2)
 
-    a_3 = np.hstack((1, a_3))
+    a_3_flat = np.hstack((1, a_3))
 
-    return sigmoid(a_3 @ Theta3)
+    output = sigmoid(a_3_flat @ Theta3)
+
+    return output

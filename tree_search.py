@@ -1,15 +1,14 @@
 import branch
 import gameplay
 import random
-import feedforward_prop
+import archive.feedforward_prop as feedforward_prop
 import numpy as np
+import neural_network
+
 
 def eval(game):
-    # eval = 0
-    # for x in range(6):
-    #     for y in range(7):
-    #         if game.square([x, y]) is not None:
-    #             eval += x
+
+    '''A fake evaluation, returning random value for evaluation. ***for testing***'''
 
     if game.red_wins:
         return 0
@@ -20,7 +19,7 @@ def eval(game):
     
     return random.random()
 
-def nn_eval(game, theta_1, theta_2, theta_3):
+def nn_eval(game, nn):
     
     '''Evaluate board position value using neural network, takes in game state and thetas to produce a float output'''
 
@@ -39,11 +38,71 @@ def nn_eval(game, theta_1, theta_2, theta_3):
     complete_board = np.concatenate((red_board, yellow_board))
 
     x = np.where(complete_board == None, 0, complete_board).astype(float)
+    return nn.feedforward(x)
+
+def alpha_beta_tree_search(game, nn, depth, mode = "combinatorics", level = 0, move = None, beta = None):
+
+    '''Searches through all possible game states, and output the best one as a list of game states'''
     
+    #If branch result in game conclusion, return as the end of branch
+    if game.win_con_eval() is not None:
+        return [game.win_con_eval(), [move], level]
 
-    return feedforward_prop.feedforward_prop(x, theta_1, theta_2, theta_3)[0]
+    #If branch reached deapth, return as the end of branch
+    elif level == depth:
+        if mode == "nn":
+            return [nn_eval(game, nn), [move], level]
+        else:
+            return[eval(game), [move], level]
 
-def tree_search(game, depth, mode = "combinatorics", theta_1 = None, theta_2 = None, theta_3 = None, level = 0, move = None):
+    #Recursive search function
+    alpha = None
+    i = 0
+    futures = len(branch.branch_avalibilities(game.board)) - 1
+
+    while alpha_compare(alpha, beta, game.side) and i <= futures:
+
+        future_move = branch.branch_avalibilities(game.board)[i]
+        i += 1
+
+        game.computer_movement(future_move)
+        line = alpha_beta_tree_search(game, nn, depth, mode, level = level + 1, move = future_move, beta = alpha)
+        game.movement_undo(future_move)
+
+        if alpha is None:
+            alpha = line
+
+        elif game.side:
+            if line[0] > alpha[0]:
+                alpha = line
+        
+        elif game.side == 0:
+            if line[0] < alpha[0]:
+                alpha = line
+    
+    if level != 0:
+        alpha[1].append(move)
+        return alpha
+    
+    return (alpha[1][-1], alpha[0])
+
+def alpha_compare(alpha, beta, side):
+
+    '''Part of the alpha beta search algorithm'''
+
+    if alpha == None or beta == None:
+        return True
+
+    if side:
+        if beta[0] >= alpha[0]:
+            return True
+    
+    if beta[0] <= alpha[0]:
+        return True
+
+    return False
+
+def tree_search(game, nn, depth, mode = "combinatorics", level = 0, move = None):
 
     '''Searches through all possible game states, and output the best one as a list of game states'''
     
@@ -54,7 +113,7 @@ def tree_search(game, depth, mode = "combinatorics", theta_1 = None, theta_2 = N
     #If branch reached deapth, return as the end of branch
     elif level == depth:
         if mode == "nn":
-            return [nn_eval(game, theta_1, theta_2, theta_3), move, level]
+            return [nn_eval(game, nn), move, level]
         else:
             return[eval(game), move, level]
 
@@ -63,7 +122,7 @@ def tree_search(game, depth, mode = "combinatorics", theta_1 = None, theta_2 = N
     for future_move in branch.branch_avalibilities(game.board):
         
         game.computer_movement(future_move)
-        lines.append(tree_search(game, depth, mode, theta_1, theta_2, theta_3, level = level + 1, move = future_move))
+        lines.append(tree_search(game, nn, depth, mode, level = level + 1, move = future_move))
         game.movement_undo(future_move)
 
     #If there is an absolute win, then take the fastest win sequence
@@ -92,72 +151,3 @@ def tree_search(game, depth, mode = "combinatorics", theta_1 = None, theta_2 = N
     
     print(best_line)
     return best_line[1]
-
-
-def alpha_beta_tree_search(game, depth, mode = "combinatorics", theta_1 = None, theta_2 = None, theta_3 = None, level = 0, move = None, beta = None):
-
-    '''Searches through all possible game states, and output the best one as a list of game states'''
-    
-    #If branch result in game conclusion, return as the end of branch
-    if game.win_con_eval() is not None:
-        return [game.win_con_eval(), move, level]
-
-    #If branch reached deapth, return as the end of branch
-    elif level == depth:
-        if mode == "nn":
-            return [nn_eval(game, theta_1, theta_2, theta_3), move, level]
-        else:
-            return[eval(game), move, level]
-
-    #Recursive search function
-    lines = []
-    alpha = None
-    i = 0
-    futures = len(branch.branch_avalibilities(game.board)) - 1
-    while alpha_compare(alpha, beta, game.side) and i <= futures:
-       
-        future_move = branch.branch_avalibilities(game.board)[i]
-        i += 1
-
-        game.computer_movement(future_move)
-        line = alpha_beta_tree_search(game, depth, mode, theta_1, theta_2, theta_3, level = level + 1, move = future_move, beta = alpha)
-        game.movement_undo(future_move)
-
-        if alpha is None:
-            alpha = line
-
-        elif game.side:
-            if line[0] > alpha[0]:
-                alpha = line
-        
-        elif game.side == 0:
-            if line[0] < alpha[0]:
-                alpha = line
-    
-    if level != 0:
-        alpha.insert(1, move)
-        return alpha
-    
-    print(alpha)
-    return alpha[1]
-
-
-def alpha_compare(alpha, beta, side):
-    if alpha == None or beta == None:
-        return True
-
-    if side:
-        if beta[0] >= alpha[0]:
-            return True
-    
-    if beta[0] <= alpha[0]:
-        return True
-
-    return False
-
-def branch_priority(game, theta_1, theta_2, theta_3):
-    interst_level = {i : None for i in range(7)}
-    i = 0
-    for future_move in branch.branch_avalibilities(game.board):
-        interst_level[i] = tree_search(game, 0, "nn", theta_1, theta_2, theta_3, level = 0, move = future_move)
-        i += 1
