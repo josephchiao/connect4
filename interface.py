@@ -63,12 +63,13 @@ def player_vs_computer(nn_depth):
     Game = gp.Game(setup.board_generation())
 
     nn = neural_network.NeuralNetwork()
-    nn.theta_recover("/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network Restructure/connect4/genetic_elite_data/nn_theta_set_0.npz")
+#    nn.theta_recover("/Users/joseph_chiao/Desktop/Advance Research/Machine Learning/Connect 4 Neural network Restructure/connect4/genetic_elite_data/nn_theta_set_0.npz")
+    nn.theta_recover("genetic_elite_data/nn_theta_set_0.npz")
 
     player_side = None
 
     while player_side is None:
-        player_color = input("What color would you like to play as?").lower()
+        player_color = input("What color would you like to play as? (red, yellow)").lower()
 
         if player_color == "red" or player_color == "r":
             player_side = 0
@@ -173,5 +174,6 @@ def game_interval(Game):
         return True
     
     return False
-  
-player_vs_computer(5)
+
+
+player_vs_computer(6)
